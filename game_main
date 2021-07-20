@@ -1,0 +1,210 @@
+board_positions = ['x',1,2,3,4,5,6,7,8,9]
+board_symbols = [' ']*9
+player_symbol = ['X','O']
+print(board_positions[1:])
+
+def display_board(sym):
+    '''
+    Prints out the display board for the game with the characters currently in board_symbols. 
+    '''
+    print('\n\t{0:^9}|{1:^9}|{2:^9}'.format(sym[6],sym[7],sym[8]))
+    print('\t'+'-'*30)
+    print('\t{0:^9}|{1:^9}|{2:^9}'.format(sym[3],sym[4],sym[5]))
+    #print(f' {sym[3]} | {sym[4]} | {sym[5]}')
+    print('\t'+'-'*30)
+    print('\t{0:^9}|{1:^9}|{2:^9}\n'.format(sym[0],sym[1],sym[2]))
+    #print(f' {sym[0]} | {sym[1]} | {sym[2]}')
+    
+def choose_position(player_sym,sym,b_pos,pos):
+    '''
+    Takes input via the pos arguement and checks to see if it is in b_pos (a.k.a. board_positions) and not 'x' for 
+    game breaking purposes. After verifying it is a proper choice it pops off the position from b_pos and adds the
+    players symbol, player_sym, to sym (a.k.a. board_symbols) 
+    '''
+    
+    if pos in b_pos and not pos == 'x':
+        sym[pos - 1] = player_sym
+        b_pos.pop(b_pos.index(pos))
+        
+def game_won(sym, p_sym):
+    '''
+    Checks to see if anyone has won the game or not
+    '''
+    if sym[0] == p_sym and sym[1] == p_sym and sym[2] == p_sym :
+        return False
+    elif sym[3] == p_sym and sym[4] == p_sym and sym[5] == p_sym:
+        return False
+    elif sym[6] == p_sym and sym[7] == p_sym and sym[8] == p_sym:
+        return False
+    elif sym[0] == p_sym and sym[3] == p_sym and sym[6] == p_sym:
+        return False
+    elif sym[1] == p_sym and sym[4] == p_sym and sym[7] == p_sym:
+        return False
+    elif sym[2] == p_sym and sym[5] == p_sym and sym[8] == p_sym:
+        return False
+    elif sym[0] == p_sym and sym[4] == p_sym and sym[8] == p_sym:
+        return False
+    elif sym[2] == p_sym and sym[4] == p_sym and sym[6] == p_sym:
+        return False
+    else:
+        return True
+        
+def player_symbol_choice(player_symbol, choice):
+    '''Allows the first player to choose X or O'''
+    
+    while choice.upper() not in player_symbol:
+        choice = input('Invalid choice, please pick either X or O: ')
+    
+    if choice.upper() in player_symbol:
+        if choice.upper() == 'O':
+            player_symbol[0] = 'O'
+            player_symbol[1] = 'X'
+        else:
+            player_symbol[0] = choice.upper()
+            player_symbol[1] = 'O'
+
+def gameon_choice():
+    
+    choice = 'wrong'
+    
+    while choice not in ['Y','N']:
+        
+        choice = input('Would you like to keep playing? [Y/N]: ')
+        
+        if choice.upper() not in ['Y','N']:
+            clear_output()
+            print('Sorry, I could not understand your selection. Please pick [Y/N]')
+        elif choice.upper() in ['Y','N']:
+            break
+    
+    if choice.upper() == 'Y':
+        return True
+    else:
+        return False
+        
+from random import randint
+
+def player_first():
+    
+    return randint(0,1)
+    
+from IPython.display import clear_output
+from random import randint
+
+## Initializes the game to run.
+game_on = True
+
+## While game_on the game will be played.
+while game_on:
+    
+    ## Clears previous game results.
+    clear_output()
+    
+    ## Initializes basic datastructures and board variables.
+    board_positions = ['x',1,2,3,4,5,6,7,8,9]
+    board_symbols = [' ']*9
+    player = ['X','O']
+    temp_bp = board_positions[1:]
+    
+    
+    ## Introduction to Tic Tac Toe, how to play and how to win.
+    print('Welcome to Tic Tac Toe!')
+    print('Each player will alternate choosing a number corresponding to the position below to fill that space with their character.\n')
+    display_board(temp_bp)
+    print('\nWhen a player gets 3 of their characters to align horizontally, vertically, or diagnolly, they win.')
+    print('If all of the spots on the board are filled without anyone winning then a cats game is declared.')
+    print("Let's get started!")
+    
+    
+    ## Player 1 chooses if they wish to be X or O, player 2 takes the opposite character.
+    player_symbol_choice(player, input('\nPlayer 1, choose [X/O]: '))
+    display_board(board_symbols)
+    player_op = player_first()
+    start = 'Player 1'
+    
+    if player_op == 1:
+        start = 'Player 2'
+        print('Player 2 Starts!\n')
+    else:
+        start = 'Player 1'
+        print('Player 1 Starts!\n')
+    
+    ## Conditions for the game to be won or over. Until these conditions are met this loop will keep running.
+    while len(board_positions) > 1 and  (game_won(board_symbols,player[0]) or game_won(board_symbols,player[1])):
+        
+        if start == 'Player 1':
+            ## States which character player 1 will place.
+            print('Player 1')
+            print(player[0] + ', choose a position.')
+
+            ## Wrong choice to allow the following while loop to continually run until the proper choice is choosen.
+            choose = 'wrong'
+
+            ## While loop that continuously executes until a proper choice is given by the player.
+            while choose not in board_positions:
+
+                ## Try/except block asking for a user to give proper and available input, if an error occurs the except block states so.
+                try:
+                    choose = int(input(f'Please pick a number that is available: \nAvailable positions: \n{board_positions[1:]}\n'))
+
+                    if choose not in board_positions:
+                        clear_output()
+                        print('Invalid number. Please choose an available number.\n')
+
+                except:
+                    clear_output()
+                    print('Invalid choice. Please choose a number that is listed below.\n')
+
+                ## Displays current game standings.
+                display_board(board_symbols)
+        
+        else:
+            ## States which character player 1 will place.
+            print('Player 2')
+            print(player[1] + ', choose a position.')
+
+            ## Wrong choice to allow the following while loop to continually run until the proper choice is choosen.
+            choose = 'wrong'
+
+            ## While loop that continuously executes until a proper choice is given by the player.
+            while choose not in board_positions:
+
+                ## Try/except block asking for a user to give proper and available input, if an error occurs the except block states so.
+                try:
+                    choose = int(input(f'Please pick a number that is available: \nAvailable positions: \n{board_positions[1:]}\n'))
+
+                    if choose not in board_positions:
+                        clear_output()
+                        print('Invalid number. Please choose an available number.\n')
+
+                except:
+                    clear_output()
+                    print('Invalid input. Please choose an available number.\n')
+
+                display_board(board_symbols)
+
+        ## Clears previous screen and updates the game with the new information the player has choosen.    
+        clear_output()
+        
+        if start == 'Player 1':
+            choose_position(player[0],board_symbols,board_positions,choose)
+        else:
+            choose_position(player[1],board_symbols,board_positions,choose)
+        
+        display_board(board_symbols)
+
+        ## By the nature of this while loop, this if/elif block is necessary to break out of the game once it is won for the first player.            
+        if not game_won(board_symbols,player[1]) or not game_won(board_symbols,player[0]):
+            print('\n'+ start + ' won the game!')
+            break
+        elif len(board_positions) <= 1:
+            print('\nCats Game')
+            break
+        else:
+            if start == 'Player 1':
+                start = 'Player 2'
+            else:
+                start = 'Player 1'
+    
+    ## Asks the players if they wish to play another game.
+    game_on = gameon_choice()
